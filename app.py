@@ -6,13 +6,13 @@ from viktor.views import SVGView, SVGResult
 from viktor.parametrization import ViktorParametrization, MultiSelectField, Text, IntegerField 
 
 class Parametrization(ViktorParametrization):
-    text = Text("Hi! Create your own pizza for Viktor's pizza night!")
-    slices = IntegerField('How many slices?', default=0, step = 2, min=0, max=8)
+    text = Text("# Hi! Create your own pizza for VIKTOR's pizza night!")
+    slices = IntegerField('How many slices?', default=0, step = 4, min=0, max=8)
     toppings = MultiSelectField('Which toppings?', options=['tomato', 'tuna', 'pineapple', 'spinach'], default=['tomato'])
 
 class Controller(ViktorController):
     label = "My pizza"
-    parametrization = Parametrization
+    parametrization = Parametrization(width=20)
 
     @SVGView("Pizza", duration_guess=1)
     def create_svg_result(self, params, **kwargs):
@@ -39,8 +39,8 @@ class Controller(ViktorController):
         top_y1 = (r1 * np.sin(theta1))+0.5
 
         #tomato
-        r2 = 0.4 * np.sqrt(np.random.rand(10, 1))
-        theta2 = 2 * np.pi * np.random.rand(10, 1)
+        r2 = 0.4 * np.sqrt(np.random.rand(14, 1))
+        theta2 = 2 * np.pi * np.random.rand(14, 1)
         top_x2 = (r2 * np.cos(theta2))+0.5
         top_y2 = (r2 * np.sin(theta2))+0.5
 
@@ -59,10 +59,10 @@ class Controller(ViktorController):
 
 
         if 'tomato' in params.toppings:
-            plt.plot(top_x2,top_y2,'.', color='r', markersize = 50)
+            plt.plot(top_x2,top_y2,'.', color='r', markersize = 45)
     
         if 'spinach' in params.toppings:
-            plt.plot(top_x3,top_y3,'.', color='g', markersize = 45)
+            plt.plot(top_x3,top_y3,'.', color='g', markersize = 40)
 
         if 'tuna' in params.toppings:
             plt.plot(top_x1,top_y1,'.', color='darksalmon', markersize = 30)
@@ -78,17 +78,18 @@ class Controller(ViktorController):
 
         if params.slices > 1:
             plt.plot(x1,y1, color='w')
-            if params.slices > 2:
-                plt.plot(x2,y2, color='w')  
-                if params.slices > 4:
-                    plt.plot(x3,y3, color='w')
-                    if params.slices > 6:
-                        plt.plot(x4,y4, color='w')  
+            plt.plot(x2,y2, color='w')  
+        
+        if params.slices > 4:
+            plt.plot(x3,y3, color='w')
+            plt.plot(x4,y4, color='w')  
 
         
         #set plot and remove axes
         plt.axis("off")
         plt.axis("equal")
+
+        fig.tight_layout()
 
         # save figure
         svg_data = StringIO()
